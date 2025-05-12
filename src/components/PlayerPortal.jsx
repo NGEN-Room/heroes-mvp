@@ -18,8 +18,8 @@ export default function PlayerPortal({ playerKey, playerData, onQueueAction, onQ
         <p>❤️ <strong>HP:</strong> {hp}</p>
         <p>💧 <strong>MP:</strong> {mp}</p>
         <p>⚡ <strong>AP:</strong> {ap}</p>
-        <p>📛 <strong>Status:</strong> {status.length > 0 ? status.map(s => (
-          <span key={s.name} className="inline-block bg-yellow-200 text-yellow-900 text-xs px-2 py-0.5 rounded-full mr-1">{s.name}</span>
+        <p>📛 <strong>Status:</strong> {status.length > 0 ? status.map((s, i) => (
+          <span key={`${s.name}-${i}`} className="inline-block bg-yellow-200 text-yellow-900 text-xs px-2 py-0.5 rounded-full mr-1">{s.name}</span>
         )) : <span className="text-gray-500">None</span>}</p>
       </div>
 

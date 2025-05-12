@@ -20,6 +20,22 @@ export function applyStatus(battleCharacter, statusObj) {
   }
 }
 
+
+export function establishStatus(target, { name, turns, canStack, effectFn }, caster) {
+  try {
+    const status = {
+      name,
+      turnsRemaining: turns,
+      canStack: !!canStack,
+      effect: (t) => effectFn(t, caster)
+    };
+
+    applyStatus(target, status);
+  } catch (err) {
+    console.warn("⚠️ establishStatus error:", err);
+  }
+}
+
 export function resolveStatuses(battleCharacter) {
   try {
     battleCharacter.status.forEach(status => {
