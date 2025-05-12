@@ -1,4 +1,4 @@
-/// engine/turnEngine.js
+// engine/turnEngine.js
 
 import { battleLog } from "./battleLog.js";
 
@@ -22,7 +22,7 @@ export function runTurn(state) {
     });
 
     for (const action of allActions) {
-      const { owner, target, cost = 0, mpCost = 0, effect, name } = action;
+      const { owner, target, cost = 0, mpCost = 0, effect, name, alignment } = action;
 
       if (owner.ap >= cost && owner.mp >= mpCost && typeof effect === 'function') {
         const prevHp = target.hp;
@@ -32,10 +32,18 @@ export function runTurn(state) {
 
         effect(owner, target, state);
 
-        const dmg = prevHp - target.hp;
+        let dmg = prevHp - target.hp;
 
-        if (name && state?.logs) {
-          battleLog(state, `${owner.character.name} uses ${name}${dmg > 0 ? ` for ${dmg} dmg` : ""}`);
+        if (dmg > 0 && alignment && owner.modifiedStats[alignment] !== undefined) {
+          const boost = owner.modifiedStats[alignment];
+          target.hp -= boost;
+          dmg += boost;
+        }
+
+        if (name && state?.logs && dmg > 0) {
+          battleLog(state, `${owner.character.name} uses ${name} for ${dmg} dmg`);
+        } else if (name && state?.logs) {
+          battleLog(state, `${owner.character.name} uses ${name}`);
         }
       }
     }
@@ -49,6 +57,7 @@ export function runTurn(state) {
     console.warn("⚠️ runTurn error:", err);
   }
 }
+
 
 function regenerateResources(player) {
   // Regenerate AP up to their max
