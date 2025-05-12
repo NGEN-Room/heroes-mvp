@@ -1,3 +1,5 @@
+// engine/battleState.js
+
 import { applyModifiers } from "./statModifiers.js";
 
 export function spawnCharacter(template, startingPosition) {
@@ -14,3 +16,4 @@ export function spawnCharacter(template, startingPosition) {
     queue: []
   };
 }
+

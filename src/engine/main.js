@@ -1,3 +1,5 @@
+// engine/main.js
+
 import { spawnCharacter } from "./battleState.js";
 import { runTurn } from "./turnEngine.js";
 import { resolveStatuses } from "./statusWatch.js";
@@ -13,17 +15,9 @@ export function setupMatch(player1Template, player2Template) {
     player2,
     round: 1,
     history: [],
-    isReady: { player1: false, player2: false },
-    logs: []
+    logs: [],
+    flavour: []
   };
-}
-
-export function markReady(state, playerKey) {
-  state.isReady[playerKey] = true;
-}
-
-export function canStartRound(state) {
-  return state.isReady.player1 && state.isReady.player2;
 }
 
 export function runRound(state) {
@@ -34,15 +28,13 @@ export function runRound(state) {
   resolveStatuses(player1);
   resolveStatuses(player2);
 
-  runTurn(player1, player2);
+  runTurn(state);
 
   const summary = summarizeRound(state);
   summary.forEach(msg => battleLog(state, msg));
   history.push(summary);
 
   state.round += 1;
-  state.isReady.player1 = false;
-  state.isReady.player2 = false;
 
   const winner = checkWinner(state);
   if (winner) battleLog(state, `🏆 ${winner} wins the match!`);
@@ -60,4 +52,12 @@ export function checkWinner(state) {
   if (player1.hp <= 0) return player2.character.name;
   if (player2.hp <= 0) return player1.character.name;
   return null;
+}
+
+export function flavourLog(state, message) {
+  if (!state.flavour) {
+    state.flavour = [];
+  }
+  console.log("🎭", message);
+  state.flavour.push(message);
 }

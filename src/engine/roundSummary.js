@@ -1,12 +1,18 @@
+// engine/roundSummary.js
+
 export function summarizeRound(state) {
-  const { player1, player2 } = state;
-  const summary = [];
+  const lines = [];
+  const { player1, player2, round } = state;
 
-  summary.push(`${player1.character.name} - HP: ${player1.hp}, AP: ${player1.ap}, MP: ${player1.mp}`);
-  summary.push(`Status: ${player1.status.map(s => s.name).join(", ") || "None"}`);
+  lines.push(`🌀 Round ${round}`);
 
-  summary.push(`${player2.character.name} - HP: ${player2.hp}, AP: ${player2.ap}, MP: ${player2.mp}`);
-  summary.push(`Status: ${player2.status.map(s => s.name).join(", ") || "None"}`);
+  [player1, player2].forEach(player => {
+    if (player.status.length > 0) {
+      player.status.forEach(s => {
+        lines.push(`🔥 ${player.character.name} suffers from ${s.name}`);
+      });
+    }
+  });
 
-  return summary;
+  return lines;
 }

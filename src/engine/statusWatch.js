@@ -1,41 +1,40 @@
 // engine/statusWatch.js
 
-// Apply a new status (helper function)
-export function applyStatus(battleCharacter, statusObj) {
-  const alreadyExists = battleCharacter.status.find(s => s.name === statusObj.name);
+import { battleLog } from "./battleLog.js";
 
-  // Allow stacking if statusObj.canStack is true
-  if (statusObj.canStack || !alreadyExists) {
-    battleCharacter.status.push(statusObj);
+export function applyStatus(battleCharacter, statusObj) {
+  try {
+    const alreadyExists = battleCharacter.status.find(s => s.name === statusObj.name);
+
+    if (statusObj.canStack || !alreadyExists) {
+      battleCharacter.status.push({ ...statusObj });
+      if (battleCharacter.character && battleCharacter.character.name) {
+        battleLog(
+          battleCharacter.state || {},
+          `${battleCharacter.character.name} is now ${statusObj.name} for ${statusObj.turnsRemaining} turns`
+        );
+      }
+    }
+  } catch (err) {
+    console.warn("⚠️ applyStatus error:", err);
   }
 }
 
-// Create a new status with context and caster info
-export function establishStatus(target, { name, turns, canStack, effectFn }, caster) {
-  const status = {
-    name,
-    turnsRemaining: turns,
-    canStack: !!canStack,
-    effect: (target) => effectFn(target, caster)
-  };
-
-  applyStatus(target, status);
-}
-
-// Resolve all statuses on a battle character
 export function resolveStatuses(battleCharacter) {
-  battleCharacter.status.forEach(status => {
-    if (typeof status.effect === 'function') {
-      status.effect(battleCharacter);
-    }
+  try {
+    battleCharacter.status.forEach(status => {
+      if (typeof status.effect === 'function') {
+        status.effect(battleCharacter);
+      }
+      status.turnsRemaining -= 1;
+    });
 
-    status.turnsRemaining -= 1;
-  });
-
-  clearExpiredStatuses(battleCharacter);
+    clearExpiredStatuses(battleCharacter);
+  } catch (err) {
+    console.warn("⚠️ resolveStatuses error:", err);
+  }
 }
 
-// Clear expired statuses
 function clearExpiredStatuses(battleCharacter) {
   battleCharacter.status = battleCharacter.status.filter(s => s.turnsRemaining > 0);
 }
