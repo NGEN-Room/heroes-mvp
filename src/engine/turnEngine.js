@@ -22,12 +22,12 @@ export function runTurn(state) {
     });
 
     for (const action of allActions) {
-      const { owner, target, cost = 0, mpCost = 0, effect, name, alignment } = action;
+      const { owner, target, apCost = 0, mpCost = 0, effect, name, alignment } = action;
 
-      if (owner.ap >= cost && owner.mp >= mpCost && typeof effect === 'function') {
+      if (owner.ap >= apCost && owner.mp >= mpCost && typeof effect === 'function') {
         const prevHp = target.hp;
 
-        owner.ap -= cost;
+        owner.ap -= apCost;
         owner.mp -= mpCost;
 
         effect(owner, target, state);
@@ -63,7 +63,7 @@ function regenerateResources(player) {
   // Regenerate AP up to their max
   player.ap = Math.min(player.ap + 1, player.modifiedStats.ap);
 
-  // MP regen scaled by brains
-  const regenAmount = Math.floor(player.character.rawStats.brains * 0.2);
+  // MP regen scaled by brain
+  const regenAmount = Math.floor(player.character.rawStats.brain * 0.2);
   player.mp = Math.min(player.mp + regenAmount, player.modifiedStats.mp);
 }

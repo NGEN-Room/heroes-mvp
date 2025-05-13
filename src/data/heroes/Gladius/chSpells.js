@@ -6,7 +6,7 @@ const chSpells = {
     name: "Blood Leech",
     mpCost: 10,
     speed: 2,
-    alignment: "brains",
+    alignment: "brain",
     effect: (self, target, state) => {
       const baseDmg = 8;
       target.hp -= baseDmg;

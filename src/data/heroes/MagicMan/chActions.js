@@ -1,10 +1,14 @@
+import { establishStatus } from "@/engine/statusWatch";
+
+const chActions = {
+
 burningHands: {
     name: "Burning Hands",
     mpCost: 5,
     speed: 1,
     effect: (self, target, state) => {
       const dmg = 10;
-      target.mp += 5;
+      target.hp -= dmg;
   
       establishStatus(target, {
         name: "Burn",
@@ -16,7 +20,7 @@ burningHands: {
       }, self);
     }
   }
-
+}
 
 
 export default chActions;

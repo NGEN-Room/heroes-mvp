@@ -7,9 +7,9 @@ const chActions = {
     speed: 3,
     alignment: "speed",
     effect: (self, target, state) => {
+      console.log("self:", self, "target:", target, "target.hp:", target.hp);
       const dmg = 10;
       target.hp -= dmg;
-
       establishStatus(target, {
         name: "Bleed",
         turns: 5,

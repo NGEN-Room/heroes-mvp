@@ -11,7 +11,7 @@ const chObject = {
     },
     rawStats: {
       brawn: 5,
-      brains: 3,
+      brain: 3,
       speed: 8
     }
   };

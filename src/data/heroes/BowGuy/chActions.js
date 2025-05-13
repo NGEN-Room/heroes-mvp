@@ -1,12 +1,21 @@
-const actionList = {
+const chActions = {
     killshot: {
         name: "Killshot",
-        cost : 100,
-        dmg : "allthehealth",
-        effect: (self, opp) => {
-            if (Math.random() < 0.01 ){
-                opp.hp -= opp.hp
-            } 
+        mpCost: 100,
+        apCost: 100,
+        speed: 1,
+        alignment: "speed",
+        dmg : 0,
+        effect: (self, target) => {
+            console.log("target:", target, "self:", self, "target.hp:", target.hp)
+                if (!target || target.hp !== "number"){
+                console.log("target is not valid")
+                return
+            }
+            if (Math.random()< 0.01){
+                target.hp = 0
+                console.log("killshot landed")
+            }
             else{
                 console.log("missed")
             } 
@@ -14,18 +23,30 @@ const actionList = {
     },
     multishot:{
         name: "Multishot",
-        cost: 10,
+        apCost: 10,
         dmg: 50,
-        effect: (self, opp) => {
-            opp.hp -= 50 + self.modifiedstats.speed
+        speed: 1,
+        effect: (self, target) => {
+            console.log("target:" + target, "self:" + self, "target.hp:" + target.hp)
+            if(!target || typeof target.hp !== "number"){
+                console.log("target is not valid")
+                return
+            }
+            target.hp -= 50
+            console.log("multishot landed for 50 damage")
         }
     },
     singleshot:{
         name: "Singleshot",
-        cost: 1,
+        apCost: 1,
         dmg: 5,
-        effect:(self,opp) => {
-            opp.hp -= 5 + self.modifiedstats.speed
+        effect:(self,target) => {
+            if(!target || typeof target.hp !== "number"){
+                console.log("target is not valid")
+                return
+            }
+            target.hp -= 5
+            console.log("singleshot landed for 5 damage")
         }
     },
     

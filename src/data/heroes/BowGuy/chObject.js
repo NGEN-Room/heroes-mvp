@@ -1,6 +1,6 @@
-const bowguy = {
-    name: someguy,
-    age: 250,
+const chObject = {
+    name: "Bow Guy",
+    age: 25,
     class:{
         className: "ranger",
         arrows: 20,

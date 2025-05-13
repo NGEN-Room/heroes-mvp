@@ -4,7 +4,7 @@ const chSpells = {
       mpCost: 10,
       speed: 2,
       effect: (self, target) => {
-        let damage = 15 + self.modifiedStats.brains * 2;
+        let damage = 15 + self.modifiedStats.brain * 2;
         target.hp -= damage;
 
       }
@@ -13,7 +13,7 @@ const chSpells = {
       name: "Burning Hands",
       mpCost: 5,
       speed: 1,
-      alignment: "brains", // use the brain modificaiton
+      alignment: "brain", // use the brain modificaiton
       effect: (self, target, state) => {
         let damage = 5
         target.hp -= damage

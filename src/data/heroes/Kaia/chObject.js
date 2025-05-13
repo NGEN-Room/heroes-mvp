@@ -4,6 +4,7 @@ const chObject = {
     class: {
       className: "Mage"
     },
+    status: [],
     baseStats: {
       hp: 90,
       mp: 70,
@@ -11,7 +12,7 @@ const chObject = {
     },
     rawStats: {
       brawn: 3,
-      brains: 8,
+      brain: 8,
       speed: 5
     }
   };
