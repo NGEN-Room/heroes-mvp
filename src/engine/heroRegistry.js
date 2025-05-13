@@ -3,4 +3,5 @@ export const heroRoster = {
   Kaia: () => import("@/data/heroes/Kaia/export.js"),
   Gladius: () => import("@/data/heroes/Gladius/export.js"),
   magicMan: () => import("@/data/heros/magicMan/export.js"),
+  BowGuy: () => import("@/data/heroes/BowGuy/export.js")
 };
