@@ -22,6 +22,8 @@ export function setupMatch(player1Template, player2Template) {
 
 export function runRound(state) {
   const { player1, player2, history, round } = state;
+  player1.state = state;
+  player2.state = state;
 
   const log = [`🔁 Round ${round}`];
 

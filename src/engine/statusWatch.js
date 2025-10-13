@@ -2,15 +2,16 @@
 
 import { battleLog } from "./battleLog.js";
 
-export function applyStatus(battleCharacter, statusObj) {
+export function applyStatus(battleCharacter, statusObj, state) {
   try {
     const alreadyExists = battleCharacter.status.find(s => s.name === statusObj.name);
 
     if (statusObj.canStack || !alreadyExists) {
       battleCharacter.status.push({ ...statusObj });
-      if (battleCharacter.character && battleCharacter.character.name) {
+      const battleState = state ?? battleCharacter.state;
+      if (battleState && battleCharacter.character && battleCharacter.character.name) {
         battleLog(
-          battleCharacter.state || {},
+          battleState,
           `${battleCharacter.character.name} is now ${statusObj.name} for ${statusObj.turnsRemaining} turns`
         );
       }
@@ -21,7 +22,7 @@ export function applyStatus(battleCharacter, statusObj) {
 }
 
 
-export function establishStatus(target, { name, turns, canStack, effectFn }, caster) {
+export function establishStatus(target, { name, turns, canStack, effectFn }, caster, state) {
   try {
     const status = {
       name,
@@ -30,7 +31,8 @@ export function establishStatus(target, { name, turns, canStack, effectFn }, cas
       effect: (t) => effectFn(t, caster)
     };
 
-    applyStatus(target, status);
+    const battleState = state ?? caster?.state ?? target?.state;
+    applyStatus(target, status, battleState);
   } catch (err) {
     console.warn("⚠️ establishStatus error:", err);
   }

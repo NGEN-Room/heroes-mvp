@@ -7,6 +7,9 @@ export function runTurn(state) {
     const player1 = state?.player1 || { queue: [], modifiedStats: {}, character: {}, ap: 0, mp: 0 };
     const player2 = state?.player2 || { queue: [], modifiedStats: {}, character: {}, ap: 0, mp: 0 };
 
+    player1.state = state;
+    player2.state = state;
+
     const maxLength = Math.max(player1.queue.length, player2.queue.length);
     const allActions = [];
 
@@ -22,13 +25,25 @@ export function runTurn(state) {
     });
 
     for (const action of allActions) {
-      const { owner, target, apCost = 0, mpCost = 0, effect, name, alignment } = action;
+      const {
+        owner,
+        target,
+        effect,
+        name,
+        alignment,
+        apCost,
+        cost,
+        mpCost = 0
+      } = action;
 
-      if (owner.ap >= apCost && owner.mp >= mpCost && typeof effect === 'function') {
+      const resolvedApCost = apCost ?? cost ?? 0;
+      const resolvedMpCost = mpCost ?? 0;
+
+      if (owner.ap >= resolvedApCost && owner.mp >= resolvedMpCost && typeof effect === 'function') {
         const prevHp = target.hp;
 
-        owner.ap -= apCost;
-        owner.mp -= mpCost;
+        owner.ap -= resolvedApCost;
+        owner.mp -= resolvedMpCost;
 
         effect(owner, target, state);
 

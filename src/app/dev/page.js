@@ -1,14 +1,12 @@
 // app/dev/page.js
 "use client";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import thornTemplate from "@/data/heroes/Thorn/export.js";
 import kaiaTemplate from "@/data/heroes/Kaia/export.js";
-import { spawnCharacter } from "@/engine/battleState.js";
-import { runTurn } from "@/engine/turnEngine.js";
+import { setupMatch, runRound } from "@/engine/main.js";
 
 export default function DevPage() {
-  const [thorn, setThorn] = useState(null);
-  const [kaia, setKaia] = useState(null);
+  const [battle, setBattle] = useState(null);
   const [log, setLog] = useState([]);
   const [readyThorn, setReadyThorn] = useState(false);
   const [readyKaia, setReadyKaia] = useState(false);
@@ -17,53 +15,70 @@ export default function DevPage() {
   const [kaiaQueue, setKaiaQueue] = useState([]);
 
   useEffect(() => {
-    const t = spawnCharacter(thornTemplate, 0);
-    const k = spawnCharacter(kaiaTemplate, 5);
-    setThorn(t);
-    setKaia(k);
+    const match = setupMatch(thornTemplate, kaiaTemplate);
+    setBattle(match);
+    setLog([]);
   }, []);
 
   function queueAction(player, actionName) {
-    if (player === 'thorn') {
-      const action = thorn.character.actions[actionName] || thorn.character.spells[actionName];
+    if (!battle) return;
+
+    if (player === "thorn") {
+      const hero = battle.player1;
+      const action = hero.character.actions?.[actionName] || hero.character.spells?.[actionName];
       if (action) setThornQueue(prev => [...prev, action]);
-    } else if (player === 'kaia') {
-      const action = kaia.character.actions[actionName] || kaia.character.spells[actionName];
+    } else if (player === "kaia") {
+      const hero = battle.player2;
+      const action = hero.character.actions?.[actionName] || hero.character.spells?.[actionName];
       if (action) setKaiaQueue(prev => [...prev, action]);
     }
   }
 
-  function runBattleTurn() {
-    if (!readyThorn || !readyKaia) return;
+  const runBattleTurn = useCallback(() => {
+    if (!readyThorn || !readyKaia || !battle) return;
 
-    thorn.queue = [...thornQueue];
-    kaia.queue = [...kaiaQueue];
-
-    const turnLog = [];
-    const originalLog = console.log;
-    console.log = (...args) => {
-      turnLog.push(args.join(" "));
-      originalLog(...args);
+    const nextState = {
+      ...battle,
+      player1: { ...battle.player1, queue: [...thornQueue] },
+      player2: { ...battle.player2, queue: [...kaiaQueue] },
+      logs: [...(battle.logs || [])],
+      flavour: [...(battle.flavour || [])],
+      history: [...(battle.history || [])]
     };
 
-    runTurn(thorn, kaia);
+    const previousLogLength = battle.logs?.length ?? 0;
 
-    console.log = originalLog;
+    runRound(nextState);
 
-    setThorn({ ...thorn });
-    setKaia({ ...kaia });
-    setLog(prev => [...prev, "--- New Turn ---", ...turnLog]);
+    const newLogEntries = nextState.logs?.slice(previousLogLength) ?? [];
+
+    setBattle({
+      ...nextState,
+      logs: [...(nextState.logs || [])],
+      flavour: [...(nextState.flavour || [])],
+      history: [...(nextState.history || [])],
+      player1: { ...nextState.player1 },
+      player2: { ...nextState.player2 }
+    });
+
+    if (newLogEntries.length) {
+      setLog(prev => [...prev, ...newLogEntries]);
+    }
+
     setThornQueue([]);
     setKaiaQueue([]);
     setReadyThorn(false);
     setReadyKaia(false);
-  }
+  }, [battle, kaiaQueue, readyKaia, readyThorn, thornQueue]);
 
   useEffect(() => {
     if (readyThorn && readyKaia) {
       runBattleTurn();
     }
-  }, [readyThorn, readyKaia]);
+  }, [readyThorn, readyKaia, runBattleTurn]);
+
+  const thorn = battle?.player1;
+  const kaia = battle?.player2;
 
   return (
     <div className="p-6 font-mono text-sm space-y-6 bg-gray-50 min-h-screen">
@@ -80,7 +95,7 @@ export default function DevPage() {
             </ul>
             <h3 className="mt-4 font-semibold">Actions</h3>
             <div className="flex flex-wrap gap-2 mt-2">
-              {Object.keys(thorn.character.actions).map((actionKey) => (
+              {Object.keys(thorn.character.actions || {}).map((actionKey) => (
                 <button
                   key={actionKey}
                   onClick={() => queueAction('thorn', actionKey)}
@@ -89,7 +104,7 @@ export default function DevPage() {
                   {thorn.character.actions[actionKey].name}
                 </button>
               ))}
-              {Object.keys(thorn.character.spells).map((spellKey) => (
+              {Object.keys(thorn.character.spells || {}).map((spellKey) => (
                 <button
                   key={spellKey}
                   onClick={() => queueAction('thorn', spellKey)}
@@ -118,7 +133,7 @@ export default function DevPage() {
             </ul>
             <h3 className="mt-4 font-semibold">Actions</h3>
             <div className="flex flex-wrap gap-2 mt-2">
-              {Object.keys(kaia.character.actions).map((actionKey) => (
+              {Object.keys(kaia.character.actions || {}).map((actionKey) => (
                 <button
                   key={actionKey}
                   onClick={() => queueAction('kaia', actionKey)}
@@ -127,7 +142,7 @@ export default function DevPage() {
                   {kaia.character.actions[actionKey].name}
                 </button>
               ))}
-              {Object.keys(kaia.character.spells).map((spellKey) => (
+              {Object.keys(kaia.character.spells || {}).map((spellKey) => (
                 <button
                   key={spellKey}
                   onClick={() => queueAction('kaia', spellKey)}
