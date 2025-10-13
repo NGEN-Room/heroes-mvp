@@ -7,6 +7,7 @@ const chSpells = {
     mpCost: 10,
     speed: 2,
     alignment: "brain",
+    range: 2,
     effect: (self, target, state) => {
       const baseDmg = 8;
       target.hp -= baseDmg;
@@ -27,6 +28,7 @@ const chSpells = {
     name: "Blood Tracker",
     mpCost: 5,
     speed: 3,
+    range: 2,
     effect: (self, target, state) => {
       const isBleeding = target.status.some(s => s.name === "Bleed");
       if (isBleeding) {
@@ -52,6 +54,7 @@ const chSpells = {
     mpCost: 7,
     speed: 1,
     alignment: "speed",
+    range: 1,
     effect: (self, target, state) => {
       const isBleeding = target.status.some(s => s.name === "Bleed");
       if (isBleeding) {

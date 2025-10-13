@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { setupMatch, runRound, checkWinner } from "@/engine/main.js";
 import { heroRoster } from "@/engine/heroRegistry.js";
 import PlayerPortal from "@/components/PlayerPortal";
+import BattlefieldLane from "@/components/BattlefieldLane";
 
 export default function GamePage() {
   const [match, setMatch] = useState(null);
@@ -55,98 +56,124 @@ export default function GamePage() {
 
   if (stage === "selection") {
     return (
-      <div className="p-6 space-y-6">
-        <h1 className="text-2xl font-bold">⚔️ Select Your Heroes</h1>
+      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 text-slate-100">
+        <div className="max-w-3xl mx-auto py-12 px-6 space-y-8">
+          <div className="bg-white/5 border border-white/10 rounded-2xl shadow-2xl p-8 backdrop-blur">
+            <h1 className="text-3xl font-bold tracking-tight mb-6 text-center">⚔️ Heroes Banquet</h1>
+            <p className="text-sm text-slate-300 text-center mb-8">Select two heroes to enter the arena.</p>
 
-        <div className="grid grid-cols-2 gap-4">
-          {['player1', 'player2'].map((player) => (
-            <div key={player} className="space-y-2">
-              <label className="block mb-1 font-semibold">{player}</label>
-              <select
-                value={selected[player]}
-                onChange={(e) => setSelected({ ...selected, [player]: e.target.value })}
-                className="w-full border rounded px-2 py-1"
-              >
-                {heroNames.map((name) => (
-                  <option key={name} value={name}>{name}</option>
-                ))}
-              </select>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {['player1', 'player2'].map((player, idx) => (
+                <div key={player} className="space-y-3">
+                  <label className="block text-sm font-semibold text-slate-200 uppercase tracking-wide">
+                    {player} {idx === 0 ? "— Attacker" : "— Defender"}
+                  </label>
+                  <select
+                    value={selected[player]}
+                    onChange={(e) => setSelected({ ...selected, [player]: e.target.value })}
+                    className="w-full border border-white/10 rounded-lg bg-slate-950/70 text-slate-100 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                  >
+                    {heroNames.map((name) => (
+                      <option key={name} value={name}>{name}</option>
+                    ))}
+                  </select>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
 
-        <button
-          onClick={handleConfirmMatch}
-          className="px-6 py-2 bg-purple-700 text-white rounded"
-        >
-          Confirm Match
-        </button>
+            <button
+              onClick={handleConfirmMatch}
+              className="mt-10 w-full md:w-auto md:px-8 px-6 py-2.5 bg-indigo-500 hover:bg-indigo-400 text-white font-semibold rounded-full shadow-lg shadow-indigo-900/40 transition"
+            >
+              Enter the Arena
+            </button>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="p-6 space-y-6">
-      <h1 className="text-2xl font-bold">⚔️ Heroes Banquet: MVP</h1>
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 text-slate-100">
+      <div className="max-w-6xl mx-auto py-12 px-6 space-y-8">
+        <header className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">⚔️ Heroes Banquet: MVP</h1>
+            <p className="text-sm text-slate-300">Queue abilities, control your positioning, and outplay your rival.</p>
+          </div>
+          <div className="flex gap-3">
+            <button
+              onClick={handleStartRound}
+              className="px-6 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold rounded-full shadow-lg shadow-emerald-900/40 transition"
+            >
+              Start Round
+            </button>
+            <button
+              onClick={handleResetMatch}
+              className="px-6 py-2 bg-slate-800 hover:bg-slate-700 text-slate-100 font-semibold rounded-full shadow-lg shadow-slate-950/50 transition"
+            >
+              Reset Match
+            </button>
+          </div>
+        </header>
 
-      {winner && (
-        <div className="p-4 bg-yellow-300 border border-yellow-600 rounded text-center font-bold text-lg">
-          🏆 {winner === "Draw" ? "It's a draw!" : `${winner} wins the match!`}
-        </div>
-      )}
+        {winner && (
+          <div className="p-4 bg-amber-400/20 border border-amber-300/40 rounded-xl text-center font-semibold text-lg text-amber-200 shadow-lg shadow-amber-900/30">
+            🏆 {winner === "Draw" ? "It's a draw!" : `${winner} wins the match!`}
+          </div>
+        )}
 
-      {/* Player Portals */}
-      <div className="grid grid-cols-2 gap-4">
-        {['player1', 'player2'].map((playerKey) => (
-          <PlayerPortal
-            key={playerKey}
-            playerKey={playerKey}
-            playerData={match?.[playerKey]}
-            onQueueAction={handleQueueAction}
-            onQueueSpell={handleQueueSpell}
-            isReady={false}
+        {match && (
+          <BattlefieldLane
+            grid={match.grid}
+            player1={match.player1}
+            player2={match.player2}
           />
-        ))}
-      </div>
+        )}
 
-      {/* Round Controls */}
-      <div className="flex gap-4">
-        <button
-          onClick={handleStartRound}
-          className="px-6 py-2 bg-green-700 text-white rounded"
-        >
-          Start Round
-        </button>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {['player1', 'player2'].map((playerKey) => (
+            <PlayerPortal
+              key={playerKey}
+              playerKey={playerKey}
+              playerData={match?.[playerKey]}
+              onQueueAction={handleQueueAction}
+              onQueueSpell={handleQueueSpell}
+              isReady={false}
+            />
+          ))}
+        </div>
 
-        <button
-          onClick={handleResetMatch}
-          className="px-6 py-2 bg-gray-700 text-white rounded"
-        >
-          Reset Match
-        </button>
-      </div>
+        <div className="flex gap-3">
+          <button
+            onClick={() => setLogView("battle")}
+            className={`px-4 py-1.5 text-xs font-semibold rounded-full transition ${
+              logView === "battle"
+                ? "bg-indigo-500 text-slate-950 shadow-lg shadow-indigo-900/40"
+                : "bg-white/10 text-slate-200 hover:bg-white/20"
+            }`}
+          >
+            Battle Log
+          </button>
+          <button
+            onClick={() => setLogView("flavour")}
+            className={`px-4 py-1.5 text-xs font-semibold rounded-full transition ${
+              logView === "flavour"
+                ? "bg-pink-500 text-slate-950 shadow-lg shadow-pink-900/40"
+                : "bg-white/10 text-slate-200 hover:bg-white/20"
+            }`}
+          >
+            Flavour
+          </button>
+        </div>
 
-      {/* Log Tabs */}
-      <div className="flex gap-2">
-        <button
-          onClick={() => setLogView("battle")}
-          className={`px-4 py-1 text-sm rounded ${logView === "battle" ? "bg-blue-600 text-white" : "bg-gray-200"}`}
-        >
-          Battle Log
-        </button>
-        <button
-          onClick={() => setLogView("flavour")}
-          className={`px-4 py-1 text-sm rounded ${logView === "flavour" ? "bg-purple-600 text-white" : "bg-gray-200"}`}
-        >
-          Flavour
-        </button>
-      </div>
-
-      {/* Log Output */}
-      <div className="bg-gray-100 border rounded p-4 text-sm h-60 overflow-y-scroll">
-        {(logView === "battle" ? match?.logs : match?.flavour)?.slice().reverse().map((line, idx) => (
-          <div key={idx}>{line}</div>
-        ))}
+        <div className="bg-slate-950/60 border border-white/10 rounded-2xl p-4 text-sm h-64 overflow-y-scroll shadow-inner shadow-slate-950">
+          {(logView === "battle" ? match?.logs : match?.flavour)?.slice().reverse().map((line, idx) => (
+            <div key={idx} className="text-slate-200">
+              {line}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

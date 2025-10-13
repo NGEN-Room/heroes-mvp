@@ -5,10 +5,14 @@ import { runTurn } from "./turnEngine.js";
 import { resolveStatuses } from "./statusWatch.js";
 import { summarizeRound } from "./roundSummary.js";
 import { battleLog } from "./battleLog.js";
+import { GRID_LIMITS, coreMovementActions } from "./positioning.js";
 
 export function setupMatch(player1Template, player2Template) {
-  const player1 = spawnCharacter(player1Template, 0);
-  const player2 = spawnCharacter(player2Template, 5);
+  const hero1 = withCoreMovement(player1Template);
+  const hero2 = withCoreMovement(player2Template);
+
+  const player1 = spawnCharacter(hero1, GRID_LIMITS.min);
+  const player2 = spawnCharacter(hero2, GRID_LIMITS.max);
 
   return {
     player1,
@@ -16,7 +20,8 @@ export function setupMatch(player1Template, player2Template) {
     round: 1,
     history: [],
     logs: [],
-    flavour: []
+    flavour: [],
+    grid: { ...GRID_LIMITS }
   };
 }
 
@@ -62,4 +67,16 @@ export function flavourLog(state, message) {
   }
   console.log("🎭", message);
   state.flavour.push(message);
+}
+
+function withCoreMovement(template) {
+  const actions = {
+    ...coreMovementActions,
+    ...(template.actions || {})
+  };
+
+  return {
+    ...template,
+    actions
+  };
 }

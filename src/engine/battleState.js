@@ -1,6 +1,7 @@
 // engine/battleState.js
 
 import { applyModifiers } from "./statModifiers.js";
+import { clampPosition } from "./positioning.js";
 
 export function spawnCharacter(template, startingPosition) {
   const modifiedTemplate = applyModifiers(template);
@@ -11,9 +12,8 @@ export function spawnCharacter(template, startingPosition) {
     hp: modifiedTemplate.modifiedStats.hp,
     mp: modifiedTemplate.modifiedStats.mp,
     ap: modifiedTemplate.modifiedStats.ap,
-    position: startingPosition,
+    position: clampPosition(startingPosition),
     status: [],
     queue: []
   };
 }
-

@@ -6,6 +6,7 @@ const chActions = {
     cost: 3,
     speed: 3,
     alignment: "speed",
+    range: 1,
     effect: (self, target, state) => {
       console.log("self:", self, "target:", target, "target.hp:", target.hp);
       const dmg = 10;
@@ -26,6 +27,7 @@ const chActions = {
     cost: 2,
     speed: 4,
     alignment: "speed",
+    range: 1,
     effect: (self, target, state) => {
       const dmg = 5;
       target.hp -= dmg;

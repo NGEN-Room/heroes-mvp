@@ -1,6 +1,7 @@
 // engine/turnEngine.js
 
 import { battleLog } from "./battleLog.js";
+import { withinRange } from "./positioning.js";
 
 export function runTurn(state) {
   try {
@@ -39,7 +40,19 @@ export function runTurn(state) {
       const resolvedApCost = apCost ?? cost ?? 0;
       const resolvedMpCost = mpCost ?? 0;
 
-      if (owner.ap >= resolvedApCost && owner.mp >= resolvedMpCost && typeof effect === 'function') {
+      if (typeof effect !== "function") {
+        continue;
+      }
+
+      if (!withinRange(action, owner, target)) {
+        if (state?.logs) {
+          const label = name ?? "action";
+          battleLog(state, `${owner.character.name}'s ${label} fails — target out of range.`);
+        }
+        continue;
+      }
+
+      if (owner.ap >= resolvedApCost && owner.mp >= resolvedMpCost) {
         const prevHp = target.hp;
 
         owner.ap -= resolvedApCost;
@@ -60,6 +73,9 @@ export function runTurn(state) {
         } else if (name && state?.logs) {
           battleLog(state, `${owner.character.name} uses ${name}`);
         }
+      } else if (state?.logs) {
+        const label = name ?? "action";
+        battleLog(state, `${owner.character.name} cannot afford ${label}.`);
       }
     }
 

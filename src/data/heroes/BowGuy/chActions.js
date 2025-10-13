@@ -6,9 +6,10 @@ const chActions = {
         speed: 1,
         alignment: "speed",
         dmg : 0,
+        range: "global",
         effect: (self, target) => {
             console.log("target:", target, "self:", self, "target.hp:", target.hp)
-                if (!target || target.hp !== "number"){
+                if (!target || typeof target.hp !== "number"){
                 console.log("target is not valid")
                 return
             }
@@ -26,6 +27,7 @@ const chActions = {
         apCost: 10,
         dmg: 50,
         speed: 1,
+        range: "ranged",
         effect: (self, target) => {
             console.log("target:" + target, "self:" + self, "target.hp:" + target.hp)
             if(!target || typeof target.hp !== "number"){
@@ -40,6 +42,7 @@ const chActions = {
         name: "Singleshot",
         apCost: 1,
         dmg: 5,
+        range: "ranged",
         effect:(self,target) => {
             if(!target || typeof target.hp !== "number"){
                 console.log("target is not valid")

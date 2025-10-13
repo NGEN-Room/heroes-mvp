@@ -1,36 +1,36 @@
 const chSpells = {
-    firebolt: {
-      name: "Firebolt",
-      mpCost: 10,
-      speed: 2,
-      effect: (self, target) => {
-        let damage = 15 + self.modifiedStats.brain * 2;
-        target.hp -= damage;
-
-      }
-    },
-    burningHands: {
-      name: "Burning Hands",
-      mpCost: 5,
-      speed: 1,
-      alignment: "brain", // use the brain modificaiton
-      effect: (self, target, state) => {
-        let damage = 5
-        target.hp -= damage
-        
-        const burn = {
-          name: "Burn",
-          turnsRemaining: 5,
-          canStack: false,
-          effect: (opp) => {
-            opp.hp -= 1
-          }
-
-        }
-        target.status.push(burn)
-      }
+  firebolt: {
+    name: "Firebolt",
+    mpCost: 10,
+    speed: 2,
+    range: "ranged",
+    effect: (self, target) => {
+      const damage = 15 + self.modifiedStats.brain * 2;
+      target.hp -= damage;
     }
-  };
+  },
+  burningHands: {
+    name: "Burning Hands",
+    mpCost: 5,
+    speed: 1,
+    range: 1,
+    alignment: "brain",
+    effect: (self, target) => {
+      const damage = 5;
+      target.hp -= damage;
 
-  
-  export default chSpells;
+      const burn = {
+        name: "Burn",
+        turnsRemaining: 5,
+        canStack: false,
+        effect: (opp) => {
+          opp.hp -= 1;
+        }
+      };
+
+      target.status.push(burn);
+    }
+  }
+};
+
+export default chSpells;
