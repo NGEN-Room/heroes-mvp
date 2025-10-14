@@ -1,4 +1,5 @@
 import { establishStatus } from "@/engine/statusWatch";
+import { dealDamage } from "@/engine/combatUtils";
 
 const chActions = {
   gutterPig: {
@@ -10,13 +11,13 @@ const chActions = {
     effect: (self, target, state) => {
       console.log("self:", self, "target:", target, "target.hp:", target.hp);
       const dmg = 10;
-      target.hp -= dmg;
+      dealDamage(target, dmg, state, "Gutter Pig");
       establishStatus(target, {
         name: "Bleed",
         turns: 5,
         canStack: true,
         effectFn: (t) => {
-          t.hp -= 1;
+          dealDamage(t, 1, null, "Bleed");
         }
       }, self);
     }
@@ -30,14 +31,14 @@ const chActions = {
     range: 1,
     effect: (self, target, state) => {
       const dmg = 5;
-      target.hp -= dmg;
+      dealDamage(target, dmg, state, "Double Slash");
 
       establishStatus(target, {
         name: "Bleed",
         turns: 5,
         canStack: true,
         effectFn: (t) => {
-          t.hp -= 1;
+          dealDamage(t, 1, null, "Bleed");
         }
       }, self);
     }

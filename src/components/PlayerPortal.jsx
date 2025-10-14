@@ -2,9 +2,17 @@
 
 import React, { useEffect, useState } from "react";
 
-export default function PlayerPortal({ playerKey, playerData, onQueueAction, onQueueSpell, isReady }) {
+export default function PlayerPortal({
+  playerKey,
+  playerData,
+  onQueueAction,
+  onQueueSpell,
+  onRemoveQueued,
+  onReorderQueued,
+  isReady
+}) {
   const name = playerData?.character?.name || "???";
-  const { hp, mp, ap, position, status = [], queue = [] } = playerData || {};
+  const { hp, mp, ap, position, shield = 0, status = [], queue = [] } = playerData || {};
   const actionEntries = Object.entries(playerData?.character?.actions || {});
   const spellEntries = Object.entries(playerData?.character?.spells || {});
   const defaultTab = actionEntries.length > 0 ? "actions" : "spells";
@@ -64,16 +72,54 @@ export default function PlayerPortal({ playerKey, playerData, onQueueAction, onQ
           <p>❤️ <strong>HP:</strong> {hp}</p>
           <p>💧 <strong>MP:</strong> {mp}</p>
           <p>⚡ <strong>AP:</strong> {ap}</p>
+          <p>🛡 <strong>Shield:</strong> {shield}</p>
         </div>
       </div>
 
       <div className="w-full">
         <h4 className="text-sm font-semibold mb-2 text-slate-200 uppercase tracking-wide">Queued Actions</h4>
-        <ul className="flex flex-wrap gap-2">
-          {queue.length > 0 ? queue.map((q, idx) => (
-            <li key={idx} className="bg-indigo-500/20 border border-indigo-400/40 text-indigo-100 px-2 py-1 text-xs rounded-full shadow">{q.name}</li>
-          )) : <li className="text-xs text-slate-500">No actions queued</li>}
-        </ul>
+        {queue.length > 0 ? (
+          <ul className="flex flex-col gap-2">
+            {queue.map((q, idx) => (
+              <li
+                key={`${q.name}-${idx}`}
+                className="flex items-center justify-between gap-2 bg-indigo-500/10 border border-indigo-400/20 text-indigo-100 px-3 py-2 text-xs rounded-xl shadow"
+              >
+                <span className="font-semibold text-indigo-100">{q.name}</span>
+                <div className="flex items-center gap-1">
+                  <button
+                    type="button"
+                    className="px-2 py-1 rounded-full bg-white/10 hover:bg-white/20 text-slate-200 transition disabled:opacity-40 disabled:cursor-not-allowed"
+                    onClick={() => onReorderQueued?.(playerKey, idx, -1)}
+                    disabled={idx === 0}
+                    aria-label="Move up"
+                  >
+                    ↑
+                  </button>
+                  <button
+                    type="button"
+                    className="px-2 py-1 rounded-full bg-white/10 hover:bg-white/20 text-slate-200 transition disabled:opacity-40 disabled:cursor-not-allowed"
+                    onClick={() => onReorderQueued?.(playerKey, idx, 1)}
+                    disabled={idx === queue.length - 1}
+                    aria-label="Move down"
+                  >
+                    ↓
+                  </button>
+                  <button
+                    type="button"
+                    className="px-2 py-1 rounded-full bg-rose-500/30 hover:bg-rose-500/50 text-rose-100 transition"
+                    onClick={() => onRemoveQueued?.(playerKey, idx)}
+                    aria-label="Remove"
+                  >
+                    ✕
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-xs text-slate-500">No actions queued</p>
+        )}
       </div>
 
       <div className="text-sm w-full text-slate-200">

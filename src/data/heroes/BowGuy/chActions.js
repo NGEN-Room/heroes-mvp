@@ -1,3 +1,5 @@
+import { dealDamage } from "@/engine/combatUtils";
+
 const chActions = {
     killshot: {
         name: "Killshot",
@@ -7,14 +9,15 @@ const chActions = {
         alignment: "speed",
         dmg : 0,
         range: "global",
-        effect: (self, target) => {
-            console.log("target:", target, "self:", self, "target.hp:", target.hp)
+        effect: (self, target, state) => {
+            console.log("target:", target, "self:", self, "target.hp:", target?.hp)
                 if (!target || typeof target.hp !== "number"){
                 console.log("target is not valid")
                 return
             }
             if (Math.random()< 0.01){
-                target.hp = 0
+                const total = (target.hp ?? 0) + (target.shield ?? 0);
+                dealDamage(target, total, state, "Killshot");
                 console.log("killshot landed")
             }
             else{
@@ -28,13 +31,13 @@ const chActions = {
         dmg: 50,
         speed: 1,
         range: "ranged",
-        effect: (self, target) => {
-            console.log("target:" + target, "self:" + self, "target.hp:" + target.hp)
+        effect: (self, target, state) => {
+            console.log("target:" + target, "self:" + self, "target.hp:" + target?.hp)
             if(!target || typeof target.hp !== "number"){
                 console.log("target is not valid")
                 return
             }
-            target.hp -= 50
+            dealDamage(target, 50, state, "Multishot");
             console.log("multishot landed for 50 damage")
         }
     },
@@ -43,12 +46,12 @@ const chActions = {
         apCost: 1,
         dmg: 5,
         range: "ranged",
-        effect:(self,target) => {
+        effect:(self,target, state) => {
             if(!target || typeof target.hp !== "number"){
                 console.log("target is not valid")
                 return
             }
-            target.hp -= 5
+            dealDamage(target, 5, state, "Singleshot");
             console.log("singleshot landed for 5 damage")
         }
     },

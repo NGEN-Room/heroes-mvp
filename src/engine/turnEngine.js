@@ -2,6 +2,7 @@
 
 import { battleLog } from "./battleLog.js";
 import { withinRange } from "./positioning.js";
+import { dealDamage } from "./combatUtils.js";
 
 export function runTurn(state) {
   try {
@@ -54,18 +55,24 @@ export function runTurn(state) {
 
       if (owner.ap >= resolvedApCost && owner.mp >= resolvedMpCost) {
         const prevHp = target.hp;
+        const prevShield = target.shield ?? 0;
 
         owner.ap -= resolvedApCost;
         owner.mp -= resolvedMpCost;
 
         effect(owner, target, state);
 
-        let dmg = prevHp - target.hp;
+        const hpLoss = Math.max(0, prevHp - target.hp);
+        const shieldLoss = Math.max(0, prevShield - (target.shield ?? 0));
+        let dmg = hpLoss + shieldLoss;
+        const baseDamage = dmg;
 
-        if (dmg > 0 && alignment && owner.modifiedStats[alignment] !== undefined) {
+        if (baseDamage > 0 && alignment && owner.modifiedStats[alignment] !== undefined) {
           const boost = owner.modifiedStats[alignment];
-          target.hp -= boost;
-          dmg += boost;
+          if (boost > 0) {
+            const alignmentResult = dealDamage(target, boost, state, name);
+            dmg += alignmentResult.hp + alignmentResult.shield;
+          }
         }
 
         if (name && state?.logs && dmg > 0) {

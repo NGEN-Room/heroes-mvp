@@ -1,4 +1,5 @@
-import { establishStatus, applyStatus } from "@/engine/statusWatch";
+import { establishStatus } from "@/engine/statusWatch";
+import { dealDamage, healCharacter, addShield } from "@/engine/combatUtils";
 
 const chSpells = {
   // 1. 🩸 Blood Leech — deals damage and restores HP based on bleed count
@@ -10,15 +11,23 @@ const chSpells = {
     range: 2,
     effect: (self, target, state) => {
       const baseDmg = 8;
-      target.hp -= baseDmg;
+      dealDamage(target, baseDmg, state, "Blood Leech");
 
       // Count bleeds on target
       const bleedCount = target.status.filter(s => s.name === "Bleed").length;
       const healAmount = bleedCount * 2;
-      self.hp += healAmount;
+      const { healed, overflow } = healCharacter(self, healAmount);
+
+      if (overflow > 0) {
+        addShield(self, overflow, state, "Blood Leech");
+      }
 
       if (state?.logs) {
-        state.logs.push(`${self.character.name} leeches ${healAmount} HP from ${target.character.name}'s bleeding wounds.`);
+        const details = [];
+        if (healed > 0) details.push(`restores ${healed} HP`);
+        if (overflow > 0) details.push(`gains ${overflow} shield`);
+        const detailSuffix = details.length > 0 ? ` (${details.join(", ")})` : "";
+        state.logs.push(`${self.character.name} leeches ${healAmount} vitality from ${target.character.name}${detailSuffix}.`);
       }
     }
   },
@@ -59,13 +68,13 @@ const chSpells = {
       const isBleeding = target.status.some(s => s.name === "Bleed");
       if (isBleeding) {
         const dmg = 12;
-        target.hp -= dmg;
+        dealDamage(target, dmg, state, "Final Bleed");
         establishStatus(target, {
           name: "Bleed",
           turns: 3,
           canStack: true,
           effectFn: (target) => {
-            target.hp -= 2;
+            dealDamage(target, 2, null, "Bleed");
           }
         }, self);
       } else {

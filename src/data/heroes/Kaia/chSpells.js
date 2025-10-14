@@ -1,3 +1,5 @@
+import { dealDamage } from "@/engine/combatUtils";
+
 const chSpells = {
   firebolt: {
     name: "Firebolt",
@@ -6,7 +8,7 @@ const chSpells = {
     range: "ranged",
     effect: (self, target) => {
       const damage = 15 + self.modifiedStats.brain * 2;
-      target.hp -= damage;
+      dealDamage(target, damage, self.state, "Firebolt");
     }
   },
   burningHands: {
@@ -15,16 +17,16 @@ const chSpells = {
     speed: 1,
     range: 1,
     alignment: "brain",
-    effect: (self, target) => {
+    effect: (self, target, state) => {
       const damage = 5;
-      target.hp -= damage;
+      dealDamage(target, damage, state, "Burning Hands");
 
       const burn = {
         name: "Burn",
         turnsRemaining: 5,
         canStack: false,
         effect: (opp) => {
-          opp.hp -= 1;
+          dealDamage(opp, 1, null, "Burn");
         }
       };
 

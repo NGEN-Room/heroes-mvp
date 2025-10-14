@@ -1,3 +1,5 @@
+import { dealDamage } from "@/engine/combatUtils";
+
 const chSpells = {
   fireball: {
     name: "Fireball",
@@ -7,7 +9,7 @@ const chSpells = {
     range: "ranged",
     effect: (self, target) => {
       const damage = 10;
-      target.hp -= damage;
+      dealDamage(target, damage, self.state, "Fireball");
     }
   }
 };

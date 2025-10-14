@@ -1,4 +1,5 @@
 import { establishStatus } from "@/engine/statusWatch";
+import { dealDamage } from "@/engine/combatUtils";
 
 const chActions = {
   burningHands: {
@@ -8,14 +9,14 @@ const chActions = {
     range: 1,
     effect: (self, target, state) => {
       const dmg = 10;
-      target.hp -= dmg;
+      dealDamage(target, dmg, state, "Burning Hands");
 
       establishStatus(target, {
         name: "Burn",
         turns: 5,
         canStack: false,
         effectFn: (t) => {
-          t.hp -= 1;
+          dealDamage(t, 1, null, "Burn");
         }
       }, self);
     }

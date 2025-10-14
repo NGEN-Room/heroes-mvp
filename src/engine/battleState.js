@@ -14,6 +14,7 @@ export function spawnCharacter(template, startingPosition) {
     ap: modifiedTemplate.modifiedStats.ap,
     position: clampPosition(startingPosition),
     status: [],
+    shield: 0,
     queue: []
   };
 }

@@ -34,18 +34,49 @@ export default function GamePage() {
     setWinner(win);
   }
 
+  function updateQueue(playerKey, updater) {
+    if (!match) return;
+    const player = match[playerKey];
+    if (!player) return;
+    const currentQueue = Array.isArray(player.queue) ? player.queue : [];
+    const nextQueue = updater(currentQueue);
+    if (!Array.isArray(nextQueue)) return;
+
+    const newState = {
+      ...match,
+      [playerKey]: {
+        ...player,
+        queue: nextQueue
+      }
+    };
+
+    setMatch(newState);
+  }
+
   function handleQueueAction(playerKey, actionObj) {
     if (!match) return;
-    const newState = { ...match };
-    newState[playerKey].queue.push(actionObj);
-    setMatch(newState);
+    updateQueue(playerKey, (queue) => [...queue, actionObj]);
   }
 
   function handleQueueSpell(playerKey, spellObj) {
     if (!match) return;
-    const newState = { ...match };
-    newState[playerKey].queue.push(spellObj);
-    setMatch(newState);
+    updateQueue(playerKey, (queue) => [...queue, spellObj]);
+  }
+
+  function handleRemoveQueued(playerKey, index) {
+    updateQueue(playerKey, (queue) => queue.filter((_, idx) => idx !== index));
+  }
+
+  function handleMoveQueued(playerKey, fromIndex, direction) {
+    updateQueue(playerKey, (queue) => {
+      const newQueue = [...queue];
+      if (fromIndex < 0 || fromIndex >= newQueue.length) return newQueue;
+      const targetIndex = fromIndex + direction;
+      if (targetIndex < 0 || targetIndex >= newQueue.length) return newQueue;
+      const [item] = newQueue.splice(fromIndex, 1);
+      newQueue.splice(targetIndex, 0, item);
+      return newQueue;
+    });
   }
 
   function handleResetMatch() {
@@ -139,6 +170,8 @@ export default function GamePage() {
               playerData={match?.[playerKey]}
               onQueueAction={handleQueueAction}
               onQueueSpell={handleQueueSpell}
+              onRemoveQueued={handleRemoveQueued}
+              onReorderQueued={handleMoveQueued}
               isReady={false}
             />
           ))}
