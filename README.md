@@ -1,36 +1,99 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Heroes Banquet
 
-## Getting Started
+This project is now split into:
 
-First, run the development server:
+- `src/`: a Next.js frontend
+- `backend/`: a Python backend that owns match state, turn resolution, and hero loading
+
+The frontend no longer imports the battle engine directly. It talks to the Python server over HTTP.
+
+## Backend Layout
+
+The backend is now designed so students do not need to edit one shared server file.
+
+```text
+backend/
+  engine/
+    combat.py
+    context.py
+    core_abilities.py
+    match.py
+    modifiers.py
+    positioning.py
+    registry.py
+    resources.py
+    serialization.py
+    server.py
+    status.py
+  heroes/
+    loader.py
+    thorn/
+      hero.py
+      actions.py
+      spells.py
+    kaia/
+      hero.py
+      actions.py
+      spells.py
+    ...
+```
+
+## Adding A New Hero
+
+Create a new folder in `backend/heroes/` and add:
+
+- `hero.py`
+- `actions.py`
+- `spells.py`
+
+Each hero exports one `HERO` dictionary from `hero.py`.
+The loader in `backend/heroes/loader.py` discovers hero folders automatically.
+
+Students should focus on:
+
+- hero stats
+- actions
+- spells
+- hero-specific ability logic
+
+Shared systems should stay in `backend/engine/`.
+That means if you later add mechanics like money, cooldowns, queue swapping, age effects, or time manipulation, those can be built once in the engine and then reused by any student hero.
+
+## Run It
+
+Open two terminals in `/Users/piha/development/heroes-mvp`.
+
+Terminal 1:
+
+```bash
+python3 backend/server.py
+```
+
+Terminal 2:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Then open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+The frontend expects the backend at `http://127.0.0.1:8000` by default.
+If you want a different backend URL, set:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8000
+```
 
-## Learn More
+## API
 
-To learn more about Next.js, take a look at the following resources:
+The Python backend exposes:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `GET /api/health`
+- `GET /api/heroes`
+- `POST /api/matches`
+- `POST /api/matches/:matchId/round`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Notes
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Match state is currently stored in memory in the Python process.
+- The original JavaScript engine files are still in the repo for reference, but the app now runs against the Python backend.

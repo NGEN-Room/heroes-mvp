@@ -3,7 +3,7 @@ import './globals.css';
 
 export const metadata = {
   title: 'Heroes Banquet',
-  description: 'MVP Bot Battle',
+  description: 'Next.js frontend with a Python battle backend',
 };
 
 export default function RootLayout({ children }) {
