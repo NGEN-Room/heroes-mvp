@@ -1,16 +1,14 @@
-# How To Build Status
+# Statuses
 
-Statuses are effects that stay on a hero for multiple turns.
+Statuses are effects that stay on a hero over time.
 
 Examples:
 
 - burn
 - bleed
-- poison
-- focus
-- stun
+- focused
 
-## Using `ctx`
+## `ctx` Style
 
 ```python
 def burning_touch(ctx, owner, target):
@@ -18,7 +16,7 @@ def burning_touch(ctx, owner, target):
     ctx.apply_status(target, "Burn", 3, can_stack=False, effect_type="burn_1", caster=owner)
 ```
 
-## Using Engine Imports Directly
+## Direct Engine Style
 
 ```python
 from backend.engine.status import establish_status
@@ -30,29 +28,18 @@ def burning_touch(owner, target, state):
     establish_status(target, "Burn", 3, False, "burn_1", owner, state)
 ```
 
-## Current Built-In Status Effect Types
+## Current Built-In Effect Types
 
 - `burn_1`
 - `bleed_1`
 - `bleed_2`
 - `focused_ap`
 
-These are handled in the shared engine.
+If you want a completely new effect type, that is usually a teacher engine change.
 
-## Making A Brand New Status Type
+## Direct Manual Experimentation
 
-If you want something totally new, like:
-
-- freeze
-- time lock
-- bankrupt
-- action swap curse
-
-then the teacher may need to add a new engine rule first.
-
-## Manual Status Manipulation
-
-If you want to experiment directly, you can manipulate:
+Students can also experiment directly with:
 
 ```python
 target["status"]
@@ -61,14 +48,12 @@ target["status"]
 Example:
 
 ```python
-def strange_mark(owner, target, state):
+def weird_mark(owner, target, state):
     target["status"].append({
-        "name": "Strange Mark",
+        "name": "Weird Mark",
         "turnsRemaining": 2,
         "canStack": False,
         "effectType": "burn_1",
         "sourceName": owner["character"]["name"],
     })
 ```
-
-That is more experimental and less protected, but it is allowed if you want to explore.
