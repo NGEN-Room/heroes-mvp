@@ -45,6 +45,8 @@ ctx.add_shield(owner, 4, "Barrier")
 
 ```python
 ctx.apply_status(target, "Burn", 3, can_stack=False, effect_type="burn_1", caster=owner)
+ctx.stun(target, 1, caster=owner)
+ctx.hold(target, 2, caster=owner)
 ```
 
 ### Movement

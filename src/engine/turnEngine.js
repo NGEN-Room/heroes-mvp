@@ -3,6 +3,7 @@
 import { battleLog } from "./battleLog.js";
 import { withinRange } from "./positioning.js";
 import { dealDamage } from "./combatUtils.js";
+import { isStunned } from "./statusWatch.js";
 
 export function runTurn(state) {
   try {
@@ -42,6 +43,14 @@ export function runTurn(state) {
       const resolvedMpCost = mpCost ?? 0;
 
       if (typeof effect !== "function") {
+        continue;
+      }
+
+      if (isStunned(owner)) {
+        if (state?.logs) {
+          const label = name ?? "action";
+          battleLog(state, `${owner.character.name} is stunned and cannot use ${label}.`);
+        }
         continue;
       }
 
