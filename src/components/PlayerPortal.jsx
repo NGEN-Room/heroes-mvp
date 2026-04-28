@@ -135,7 +135,7 @@ export default function PlayerPortal({
                 key={`${entry.name}-${idx}`}
                 className="inline-block bg-amber-400/20 text-amber-200 text-xs px-2 py-0.5 rounded-full mr-1 border border-amber-200/30"
               >
-                {entry.name} ({entry.turnsRemaining})
+                {entry.name}{entry.stacks > 1 ? ` x${entry.stacks}` : ""} ({entry.turnsRemaining})
               </span>
             ))
           ) : (

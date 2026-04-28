@@ -7,6 +7,20 @@ def public_ability(ability):
     return visible
 
 
+def public_statuses(statuses):
+    grouped = {}
+
+    for status in statuses:
+        name = status["name"]
+        if name not in grouped:
+            grouped[name] = {"name": name, "turnsRemaining": status["turnsRemaining"], "stacks": 0}
+
+        grouped[name]["stacks"] += 1
+        grouped[name]["turnsRemaining"] = max(grouped[name]["turnsRemaining"], status["turnsRemaining"])
+
+    return list(grouped.values())
+
+
 def serialize_player(player, hero_definition):
     return {
         "heroId": player["heroId"],
@@ -20,7 +34,7 @@ def serialize_player(player, hero_definition):
         "ap": player["ap"],
         "position": player["position"],
         "shield": player.get("shield", 0),
-        "status": [{"name": status["name"], "turnsRemaining": status["turnsRemaining"]} for status in player["status"]],
+        "status": public_statuses(player["status"]),
         "queue": list(player["queue"]),
         "availableActions": [public_ability(ability) for ability in hero_definition["actions"]],
         "availableSpells": [public_ability(ability) for ability in hero_definition["spells"]],
