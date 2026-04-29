@@ -1,9 +1,9 @@
-from hero import HERO
-# def hero_has_name():
-#     assert hero["name"] != ""
+import hero
+def hero_has_name():
+    assert hero.HERO["name"] != ""
 
 def hero_has_health():
-    assert HERO['hp'] > 0
+    assert hero.HERO['hp'] > 0
 
-# def drunkard_drunk():
-#     assert HERO['drunkness'] == 'drunk'
+def drunkard_drunk():
+    assert hero.HERO['drunkness'] == 'drunk'
