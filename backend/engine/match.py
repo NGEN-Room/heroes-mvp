@@ -8,7 +8,7 @@ from backend.engine.modifiers import apply_modifiers
 from backend.engine.positioning import GRID_LIMITS, within_range
 from backend.engine.resources import regenerate_resources
 from backend.engine.serialization import serialize_match
-from backend.engine.status import resolve_statuses
+from backend.engine.status import is_stunned, resolve_statuses
 
 
 class MatchService:
@@ -95,6 +95,10 @@ class MatchService:
             ability_name = ability["name"]
             ap_cost = ability.get("apCost", ability.get("cost", 0))
             mp_cost = ability.get("mpCost", 0)
+
+            if is_stunned(owner):
+                battle_log(state, f"{owner['character']['name']} is stunned and cannot use {ability_name}.")
+                continue
 
             if not within_range(ability, owner, target):
                 battle_log(state, f"{owner['character']['name']}'s {ability_name} fails - target out of range.")

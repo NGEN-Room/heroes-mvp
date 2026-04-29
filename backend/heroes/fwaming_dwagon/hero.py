@@ -1,13 +1,15 @@
-from backend.heroes.magic_man.actions import ACTIONS
-from backend.heroes.magic_man.spells import SPELLS
+
+from backend.heroes.fwaming_dwagon.actions import ACTIONS
+from backend.heroes.fwaming_dwagon.spells import SPELLS
+
 
 HERO = {
     "id": "fwaming_dwagon",
-    "Name": "Fwaming Dragon",
-    "charcater": {
-        "name": "Fwaming Dragon",
+    "name": "Fwaming Dwagon",
+    "character": {
+        "name": "Fwaming Dwagon",
         "age": 32,
-        "class": {"className": "Pyromaniac"},
+        "class": {"className": "Aspiring Fwame Mage"},
         "baseStats": {
             "hp": 75,
             "mp": 100,
