@@ -19,9 +19,9 @@ ACTIONS = [
     {
         "id": "killshot",
         "name": "Killshot",
-        "apCost": 100,
-        "mpCost": 100,
-        "speed": 1,
+        "apCost": 10,
+        "mpCost": 10,
+        "speed": 3,
         "alignment": "speed",
         "range": "global",
         "kind": "action",
@@ -39,7 +39,7 @@ ACTIONS = [
     {
         "id": "singleshot",
         "name": "Singleshot",
-        "apCost": 1,
+        "apCost": 2,
         "range": "ranged",
         "kind": "action",
         "effect": singleshot,
