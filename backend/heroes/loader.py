@@ -1,13 +1,13 @@
 from importlib import import_module
 from pkgutil import iter_modules
 
-import backend.heroes.big_Tom
+import backend.heroes
 
 
 def load_heroes():
     heroes = {}
 
-    for module_info in iter_modules(backend.heroes.big_Tom.__path__):
+    for module_info in iter_modules(backend.heroes.__path__):
         if not module_info.ispkg or module_info.name == "loader":
             continue
 
