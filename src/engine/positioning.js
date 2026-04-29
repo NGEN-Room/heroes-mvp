@@ -4,6 +4,7 @@
 // contiguous integer slots; player1 starts at the low end, player2 at the high end.
 
 import { battleLog } from "./battleLog.js";
+import { isHeld } from "./statusWatch.js";
 
 export const GRID_LIMITS = {
   min: 0,
@@ -25,10 +26,17 @@ export function moveBy(actor, delta, state, intent = null) {
 
   const prev = actor.position ?? GRID_LIMITS.min;
   const next = clampPosition(prev + delta);
+  const direction = intent ?? (delta > 0 ? "forward" : "back");
+
+  if (isHeld(actor)) {
+    if (state) {
+      battleLog(state, `${actor.character?.name ?? "Unknown"} is held and cannot move ${direction}.`);
+    }
+    return false;
+  }
 
   if (next === prev) {
     if (state) {
-      const direction = intent ?? (delta > 0 ? "forward" : "back");
       battleLog(state, `${actor.character?.name ?? "Unknown"} cannot move further ${direction}.`);
     }
     return false;
@@ -37,7 +45,6 @@ export function moveBy(actor, delta, state, intent = null) {
   actor.position = next;
 
   if (state) {
-    const direction = intent ?? (delta > 0 ? "forward" : "back");
     battleLog(state, `${actor.character?.name ?? "Unknown"} moves ${direction} to position ${next}.`);
   }
 

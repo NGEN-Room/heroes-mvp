@@ -7,6 +7,8 @@ Examples:
 - burn
 - bleed
 - focused
+- stunned
+- held
 
 ## `ctx` Style
 
@@ -14,6 +16,17 @@ Examples:
 def burning_touch(ctx, owner, target):
     ctx.deal_damage(target, 4, "Burning Touch")
     ctx.apply_status(target, "Burn", 3, can_stack=False, effect_type="burn_1", caster=owner)
+```
+
+For control effects, use the helper methods:
+
+```python
+def vine_grasp(ctx, owner, target):
+    ctx.hold(target, 2, caster=owner)
+
+
+def shocking_bonk(ctx, owner, target):
+    ctx.stun(target, 1, caster=owner)
 ```
 
 ## Direct Engine Style
@@ -34,6 +47,8 @@ def burning_touch(owner, target, state):
 - `bleed_1`
 - `bleed_2`
 - `focused_ap`
+- `held`
+- `stun`
 
 If you want a completely new effect type, that is usually a teacher engine change.
 

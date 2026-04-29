@@ -1,4 +1,5 @@
 from backend.engine.combat import battle_log
+from backend.engine.status import is_held
 
 
 GRID_LIMITS = {"min": 0, "max": 5}
@@ -17,6 +18,10 @@ def get_distance(entity_a, entity_b):
 def move_by(actor, delta, state, intent):
     previous = actor.get("position", GRID_LIMITS["min"])
     nxt = clamp_position(previous + delta)
+
+    if is_held(actor):
+        battle_log(state, f"{actor['character']['name']} is held and cannot move {intent}.")
+        return False
 
     if nxt == previous:
         battle_log(state, f"{actor['character']['name']} cannot move further {intent}.")

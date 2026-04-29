@@ -104,6 +104,17 @@ def bonk(ctx, owner, target):
     ctx.deal_damage(target, 10, "Bonk")
 ```
 
+Control effects are built in:
+
+```python
+def vine_grasp(ctx, owner, target):
+    ctx.hold(target, 2, caster=owner)
+
+
+def shocking_bonk(ctx, owner, target):
+    ctx.stun(target, 1, caster=owner)
+```
+
 Both are allowed.
 
 ## Read The Detailed Docs

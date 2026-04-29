@@ -1,6 +1,41 @@
 from backend.engine.combat import battle_log, deal_damage
 
 
+STUN_EFFECT_TYPES = {"stun", "stunned"}
+STUN_STATUS_NAMES = {"stun", "stunned"}
+
+HELD_EFFECT_TYPES = {"held", "hold", "root", "rooted", "snare", "snared"}
+HELD_STATUS_NAMES = {"held", "hold", "rooted", "root", "snared", "snare"}
+
+
+def _normalized(value):
+    return str(value or "").strip().lower()
+
+
+def has_status_rule(character, effect_types=None, names=None):
+    effect_types = {_normalized(effect_type) for effect_type in effect_types or []}
+    names = {_normalized(name) for name in names or []}
+
+    for status in character.get("status", []):
+        effect_type = _normalized(status.get("effectType"))
+        name = _normalized(status.get("name"))
+
+        if effect_type and effect_type in effect_types:
+            return True
+        if name and name in names:
+            return True
+
+    return False
+
+
+def is_stunned(character):
+    return has_status_rule(character, effect_types=STUN_EFFECT_TYPES, names=STUN_STATUS_NAMES)
+
+
+def is_held(character):
+    return has_status_rule(character, effect_types=HELD_EFFECT_TYPES, names=HELD_STATUS_NAMES)
+
+
 def apply_status(target, status, state):
     existing = next((entry for entry in target["status"] if entry["name"] == status["name"]), None)
     if status.get("canStack") or not existing:

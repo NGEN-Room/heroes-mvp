@@ -22,6 +22,12 @@ class AbilityContext:
     def apply_status(self, target, name, turns, can_stack=False, effect_type=None, caster=None):
         establish_status(target, name, turns, can_stack, effect_type, caster, self.state)
 
+    def stun(self, target, turns=1, caster=None):
+        establish_status(target, "Stunned", turns, False, "stun", caster, self.state)
+
+    def hold(self, target, turns=1, caster=None):
+        establish_status(target, "Held", turns, False, "held", caster, self.state)
+
     def move_forward(self, actor, amount=1):
         return move_forward(actor, self.state, amount)
 
