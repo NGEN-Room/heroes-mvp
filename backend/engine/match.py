@@ -126,7 +126,7 @@ class MatchService:
             if damage_done > 0 and alignment and alignment in owner["modifiedStats"]:
                 boost = owner["modifiedStats"][alignment]
                 if boost > 0:
-                    alignment_result = deal_damage(target, boost, state, ability_name)
+                    alignment_result = deal_damage(target, boost, state, ability_name, can_dodge=False)
                     damage_done += alignment_result["hp"] + alignment_result["shield"]
 
             if damage_done > 0:

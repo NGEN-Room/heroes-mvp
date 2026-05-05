@@ -1,5 +1,7 @@
 from copy import deepcopy
 
+from backend.engine.dodge import status_dodge_modifier
+
 
 def public_ability(ability):
     visible = deepcopy(ability)
@@ -17,6 +19,9 @@ def public_statuses(statuses):
 
         grouped[name]["stacks"] += 1
         grouped[name]["turnsRemaining"] = max(grouped[name]["turnsRemaining"], status["turnsRemaining"])
+        dodge_modifier = status_dodge_modifier(status)
+        if dodge_modifier:
+            grouped[name]["dodgeModifier"] = grouped[name].get("dodgeModifier", 0) + dodge_modifier
 
     return list(grouped.values())
 
