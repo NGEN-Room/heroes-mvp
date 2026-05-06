@@ -49,8 +49,23 @@ def burning_touch(owner, target, state):
 - `focused_ap`
 - `held`
 - `stun`
+- `dodge`
 
 If you want a completely new effect type, that is usually a teacher engine change.
+
+## Dodge
+
+A status with `effect_type="dodge"` changes the chance to dodge incoming damage.
+Use a positive `dodge_modifier` to increase dodge and a negative one to decrease it.
+
+```python
+def nimble(ctx, owner, target):
+    ctx.apply_status(owner, "Nimble", 3, can_stack=True, effect_type="dodge", dodge_modifier=10, caster=owner)
+
+
+def off_balance(ctx, owner, target):
+    ctx.apply_status(target, "Off Balance", 2, can_stack=False, effect_type="dodge", dodge_modifier=-10, caster=owner)
+```
 
 ## Direct Manual Experimentation
 

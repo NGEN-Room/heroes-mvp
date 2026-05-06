@@ -10,8 +10,8 @@ class AbilityContext:
     def log(self, message):
         battle_log(self.state, message)
 
-    def deal_damage(self, target, amount, label=None):
-        return deal_damage(target, amount, self.state, label)
+    def deal_damage(self, target, amount, label=None, can_dodge=True):
+        return deal_damage(target, amount, self.state, label, can_dodge=can_dodge)
 
     def heal(self, target, amount):
         return heal_character(target, amount)
@@ -19,8 +19,8 @@ class AbilityContext:
     def add_shield(self, target, amount, label=None):
         return add_shield(target, amount, self.state, label)
 
-    def apply_status(self, target, name, turns, can_stack=False, effect_type=None, caster=None):
-        establish_status(target, name, turns, can_stack, effect_type, caster, self.state)
+    def apply_status(self, target, name, turns, can_stack=False, effect_type=None, caster=None, dodge_modifier=None):
+        establish_status(target, name, turns, can_stack, effect_type, caster, self.state, dodge_modifier=dodge_modifier)
 
     def stun(self, target, turns=1, caster=None):
         establish_status(target, "Stunned", turns, False, "stun", caster, self.state)
