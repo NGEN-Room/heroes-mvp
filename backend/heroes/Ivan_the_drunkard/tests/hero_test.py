@@ -1,4 +1,4 @@
-import hero
+import hero.py
 def hero_has_name():
     assert hero.HERO["name"] != ""
 
