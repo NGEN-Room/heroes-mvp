@@ -1,9 +1,10 @@
-import hero.py
-def hero_has_name():
-    assert hero.HERO["name"] != ""
+from backend.heroes.Ivan_the_drunkard.hero import HERO
 
-def hero_has_health():
-    assert hero.HERO['hp'] > 0
+def test_hero_has_name():
+    assert HERO["name"] != ""
 
-def drunkard_drunk():
-    assert hero.HERO['drunkness'] == 'drunk'
+def test_hero_has_health():
+    assert HERO['hp'] > 0
+
+def test_drunkard_drunk():
+    assert HERO['drunkness'] == 'drunk'
