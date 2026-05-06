@@ -1,10 +1,20 @@
+from backend.engine.status import should_dodge
+
+
 def battle_log(state, message):
     state.setdefault("logs", []).append(message)
 
 
-def deal_damage(target, amount, state=None, label=None):
+def deal_damage(target, amount, state=None, label=None, can_dodge=True):
     if amount <= 0:
-        return {"total": 0, "hp": 0, "shield": 0}
+        return {"total": 0, "hp": 0, "shield": 0, "dodged": False}
+
+    if can_dodge and should_dodge(target):
+        if state:
+            target_name = target["character"]["name"]
+            suffix = label if label else "the attack"
+            battle_log(state, f"{target_name} dodges {suffix}.")
+        return {"total": amount, "hp": 0, "shield": 0, "dodged": True}
 
     remaining = max(0, amount)
     target.setdefault("shield", 0)
@@ -24,7 +34,7 @@ def deal_damage(target, amount, state=None, label=None):
         suffix = f" from {label}" if label else ""
         battle_log(state, f"{target_name}'s shield absorbs {shield_absorbed} dmg{suffix}.")
 
-    return {"total": amount, "hp": hp_lost, "shield": shield_absorbed}
+    return {"total": amount, "hp": hp_lost, "shield": shield_absorbed, "dodged": False}
 
 
 def heal_character(target, amount):
