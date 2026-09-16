@@ -89,11 +89,11 @@ Install backend requirements:
 
 Start the backend:
 
-    python backend/app.py
+    python backend/server.py
 
 or if the project uses Flask:
 
-    flask --app backend/app run
+    flask --app backend/server run
 
 ---
 
@@ -113,11 +113,11 @@ Install backend requirements:
 
 Start the backend:
 
-    python backend/app.py
+    python backend/server.py
 
 or if the project uses Flask:
 
-    flask --app backend/app run
+    flask --app backend/server run
 
 ---
 

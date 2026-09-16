@@ -119,7 +119,8 @@ export default function GamePage() {
   }
 
   function handleQueueAbility(playerKey, abilityId) {
-    updateQueue(playerKey, (queue) => [...queue, abilityId]);
+    // A hero chooses one ability per round; selecting another replaces it.
+    updateQueue(playerKey, () => [abilityId]);
   }
 
   function handleRemoveQueued(playerKey, index) {
@@ -157,13 +158,12 @@ export default function GamePage() {
 
   if (stage === "selection") {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 text-slate-100">
+      <div className="game-shell">
         <div className="max-w-3xl mx-auto py-12 px-6 space-y-8">
-          <div className="bg-white/5 border border-white/10 rounded-2xl shadow-2xl p-8 backdrop-blur">
-            <h1 className="text-3xl font-bold tracking-tight mb-3 text-center">Heroes Banquet</h1>
-            <p className="text-sm text-slate-300 text-center mb-8">
-              Next.js now handles the frontend only. Match logic runs in the Python backend.
-            </p>
+          <div className="game-panel rounded-3xl p-8 sm:p-12">
+            <p className="text-center text-xs text-amber-300/70 uppercase tracking-[0.35em] mb-3">The arena calls</p>
+            <h1 className="font-serif text-5xl font-bold tracking-tight mb-3 text-center text-amber-100">Heroes Banquet</h1>
+            <p className="text-sm text-amber-50/65 text-center mb-8">Choose two heroes. Each round brings one decisive choice.</p>
 
             {error && (
               <div className="mb-6 rounded-xl border border-rose-400/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-100">
@@ -175,12 +175,12 @@ export default function GamePage() {
               {["player1", "player2"].map((player, idx) => (
                 <div key={player} className="space-y-3">
                   <label className="block text-sm font-semibold text-slate-200 uppercase tracking-wide">
-                    {player} {idx === 0 ? "- Attacker" : "- Defender"}
+                    {idx === 0 ? "West challenger" : "East challenger"}
                   </label>
                   <select
                     value={selected[player]}
                     onChange={(event) => setSelected((current) => ({ ...current, [player]: event.target.value }))}
-                    className="w-full border border-white/10 rounded-lg bg-slate-950/70 text-slate-100 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                    className="w-full border border-amber-100/20 rounded-lg bg-black/30 text-amber-50 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
                   >
                     {heroOptions.map((hero) => (
                       <option key={hero.id} value={hero.id}>
@@ -195,7 +195,7 @@ export default function GamePage() {
             <button
               onClick={handleConfirmMatch}
               disabled={loading}
-              className="mt-10 w-full md:w-auto md:px-8 px-6 py-2.5 bg-indigo-500 hover:bg-indigo-400 disabled:opacity-60 text-white font-semibold rounded-full shadow-lg shadow-indigo-900/40 transition"
+              className="mt-10 w-full md:w-auto md:px-8 px-6 py-3 bg-amber-400 hover:bg-amber-300 disabled:opacity-60 text-amber-950 font-bold rounded-full shadow-lg shadow-amber-950/40 transition"
             >
               {loading ? "Creating Match..." : "Enter the Arena"}
             </button>
@@ -206,24 +206,25 @@ export default function GamePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 text-slate-100">
+    <div className="game-shell">
       <div className="max-w-6xl mx-auto py-12 px-6 space-y-8">
         <header className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Heroes Banquet</h1>
-            <p className="text-sm text-slate-300">Queue abilities in the frontend and resolve each round in Python.</p>
+            <p className="text-xs text-amber-300/60 uppercase tracking-[0.25em]">Round {match?.round ?? 1}</p>
+            <h1 className="font-serif text-4xl font-bold tracking-tight text-amber-100">Heroes Banquet</h1>
+            <p className="text-sm text-amber-50/60">Choose one ability each, then let the round unfold.</p>
           </div>
           <div className="flex gap-3">
             <button
               onClick={handleStartRound}
               disabled={loading}
-              className="px-6 py-2 bg-emerald-500 hover:bg-emerald-400 disabled:opacity-60 text-slate-950 font-semibold rounded-full shadow-lg shadow-emerald-900/40 transition"
+              className="px-6 py-2 bg-amber-400 hover:bg-amber-300 disabled:opacity-60 text-amber-950 font-bold rounded-full shadow-lg shadow-amber-950/40 transition"
             >
               {loading ? "Resolving..." : "Start Round"}
             </button>
             <button
               onClick={handleResetMatch}
-              className="px-6 py-2 bg-slate-800 hover:bg-slate-700 text-slate-100 font-semibold rounded-full shadow-lg shadow-slate-950/50 transition"
+              className="px-6 py-2 bg-white/10 hover:bg-white/20 text-amber-50 font-semibold rounded-full border border-amber-100/15 transition"
             >
               Reset Match
             </button>
@@ -237,7 +238,7 @@ export default function GamePage() {
         )}
 
         {winner && (
-          <div className="p-4 bg-amber-400/20 border border-amber-300/40 rounded-xl text-center font-semibold text-lg text-amber-200 shadow-lg shadow-amber-900/30">
+          <div className="p-4 bg-amber-400/20 border border-amber-300/40 rounded-xl text-center font-semibold text-lg text-amber-100 shadow-lg shadow-amber-900/30">
             {winner === "Draw" ? "It's a draw!" : `${winner} wins the match!`}
           </div>
         )}
@@ -269,8 +270,8 @@ export default function GamePage() {
             onClick={() => setLogView("battle")}
             className={`px-4 py-1.5 text-xs font-semibold rounded-full transition ${
               logView === "battle"
-                ? "bg-indigo-500 text-slate-950 shadow-lg shadow-indigo-900/40"
-                : "bg-white/10 text-slate-200 hover:bg-white/20"
+                ? "bg-amber-400 text-amber-950 shadow-lg shadow-amber-950/40"
+                : "bg-white/10 text-amber-100 hover:bg-white/20"
             }`}
           >
             Battle Log
@@ -279,15 +280,15 @@ export default function GamePage() {
             onClick={() => setLogView("flavour")}
             className={`px-4 py-1.5 text-xs font-semibold rounded-full transition ${
               logView === "flavour"
-                ? "bg-pink-500 text-slate-950 shadow-lg shadow-pink-900/40"
-                : "bg-white/10 text-slate-200 hover:bg-white/20"
+                ? "bg-violet-400 text-violet-950 shadow-lg shadow-violet-950/40"
+                : "bg-white/10 text-amber-100 hover:bg-white/20"
             }`}
           >
             Flavour
           </button>
         </div>
 
-        <div className="bg-slate-950/60 border border-white/10 rounded-2xl p-4 text-sm h-64 overflow-y-scroll shadow-inner shadow-slate-950">
+        <div className="game-panel rounded-2xl p-4 text-sm h-64 overflow-y-scroll">
           {(logView === "battle" ? match?.logs : match?.flavour)?.slice().reverse().map((line, idx) => (
             <div key={idx} className="text-slate-200">
               {line}

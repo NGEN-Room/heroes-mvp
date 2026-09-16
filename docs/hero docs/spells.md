@@ -35,6 +35,7 @@ SPELLS = [
 - `minRange`
 - `kind`: should be `"spell"`
 - `alignment`
+- `cooldown`: optional number of future rounds before the spell can be used again
 - `effect`
 
 ## Direct Style Spell

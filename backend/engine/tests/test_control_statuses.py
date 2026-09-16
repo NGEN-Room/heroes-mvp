@@ -86,7 +86,7 @@ class ControlStatusTests(unittest.TestCase):
         service.run_round(state)
 
         self.assertEqual(target["hp"], 20)
-        self.assertEqual(owner["ap"], 2)
+        self.assertEqual(owner["ap"], 3)
         self.assertIn("A is stunned and cannot use Strike.", state["logs"])
 
     def test_context_helpers_apply_control_statuses(self):

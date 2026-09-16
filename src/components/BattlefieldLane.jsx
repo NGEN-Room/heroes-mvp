@@ -35,18 +35,18 @@ export default function BattlefieldLane({ grid, player1, player2 }) {
   const columnCount = slots.length || 1;
 
   return (
-    <div className="w-full space-y-2">
-      <div className="text-sm font-semibold text-slate-200 uppercase tracking-wide">Battlefield Lane</div>
+    <div className="game-panel w-full rounded-2xl p-5 space-y-3">
+      <div className="flex items-baseline justify-between"><div className="text-sm font-semibold text-amber-100 uppercase tracking-[0.18em]">The banquet hall</div><div className="text-xs text-amber-100/45">Close the distance to strike</div></div>
       <div
-        className="grid gap-2 bg-slate-950/60 border border-white/10 rounded-2xl p-4 shadow-inner shadow-slate-950 backdrop-blur"
+        className="grid gap-2 bg-black/25 border border-amber-100/10 rounded-xl p-3 shadow-inner"
         style={{ gridTemplateColumns: `repeat(${columnCount}, minmax(0, 1fr))` }}
       >
         {slots.map((slot) => (
           <div
             key={slot.pos}
-            className="flex flex-col items-center border border-white/10 rounded-xl bg-slate-900/80 py-3 px-1 text-xs shadow-md shadow-slate-950/40"
+            className="flex flex-col items-center border border-amber-100/10 rounded-xl bg-stone-950/35 py-3 px-1 text-xs"
           >
-            <div className="font-semibold text-slate-200 mb-1">Pos {slot.pos}</div>
+            <div className="font-semibold text-amber-100/60 mb-1">{slot.pos + 1}</div>
             {slot.occupants.length === 0 ? (
               <div className="text-slate-600">—</div>
             ) : (
@@ -56,8 +56,8 @@ export default function BattlefieldLane({ grid, player1, player2 }) {
                     key={occ.id}
                     className={`px-2 py-1 rounded-full text-[0.7rem] font-semibold tracking-wide ${
                       occ.id === "player1"
-                        ? "bg-indigo-500/90 text-slate-950 border border-indigo-300/50"
-                        : "bg-rose-500/90 text-slate-950 border border-rose-300/50"
+                        ? "bg-amber-400 text-amber-950 border border-amber-100/60"
+                        : "bg-violet-400 text-violet-950 border border-violet-100/60"
                     }`}
                   >
                     {occ.label}

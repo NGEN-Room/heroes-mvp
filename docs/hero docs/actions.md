@@ -34,6 +34,7 @@ ACTIONS = [
 - `minRange`: optional minimum distance
 - `kind`: should be `"action"`
 - `alignment`: optional bonus scaling
+- `cooldown`: optional number of future rounds before the move can be used again
 - `effect`: the Python function that runs
 
 ## What The Engine Does For Actions
@@ -53,6 +54,9 @@ After that, the engine may:
 - apply alignment bonus damage
 - log the move
 - regenerate some resources at round end
+
+Each hero chooses one ability per round. AP refills at the end of every round, so
+a basic action is always available next round.
 
 ## Minimal Action Example
 

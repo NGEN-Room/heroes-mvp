@@ -14,3 +14,4 @@ Use this folder when you want to understand how the engine actually works.
 - [metadata-and-why.md](/Users/piha/development/heroes-mvp/docs/metadata-and-why.md)
 - [ctx-tool.md](/Users/piha/development/heroes-mvp/docs/ctx-tool.md)
 - [engine-expectations-and-outcomes.md](/Users/piha/development/heroes-mvp/docs/engine-expectations-and-outcomes.md)
+- [gameplay-loop.md](engine%20docs/gameplay-loop.md)

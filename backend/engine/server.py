@@ -74,8 +74,8 @@ class Handler(BaseHTTPRequestHandler):
                     payload.get("player1Queue", []),
                     payload.get("player2Queue", []),
                 )
-            except KeyError as exc:
-                status = 404 if str(exc) == "'Match not found'" else 400
+            except (KeyError, ValueError) as exc:
+                status = 404 if isinstance(exc, KeyError) and str(exc) == "'Match not found'" else 400
                 self._send_json({"error": str(exc)}, status)
                 return
 

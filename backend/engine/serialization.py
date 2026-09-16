@@ -41,6 +41,7 @@ def serialize_player(player, hero_definition):
         "shield": player.get("shield", 0),
         "status": public_statuses(player["status"]),
         "queue": list(player["queue"]),
+        "cooldowns": deepcopy(player.get("cooldowns", {})),
         "availableActions": [public_ability(ability) for ability in hero_definition["actions"]],
         "availableSpells": [public_ability(ability) for ability in hero_definition["spells"]],
     }

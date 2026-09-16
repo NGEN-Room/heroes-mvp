@@ -53,6 +53,9 @@ class MatchService:
         if not state:
             raise KeyError("Match not found")
 
+        if len(player1_queue) > 1 or len(player2_queue) > 1:
+            raise ValueError("Each hero may choose only one ability per round")
+
         for ability_id in player1_queue:
             self.registry.get_ability(state["player1"]["heroId"], ability_id)
         for ability_id in player2_queue:
@@ -66,6 +69,8 @@ class MatchService:
     def run_round(self, state):
         player1 = state["player1"]
         player2 = state["player2"]
+        active_player1_cooldowns = set(player1.get("cooldowns", {}))
+        active_player2_cooldowns = set(player2.get("cooldowns", {}))
         player1["state"] = state
         player2["state"] = state
 
@@ -95,6 +100,11 @@ class MatchService:
             ability_name = ability["name"]
             ap_cost = ability.get("apCost", ability.get("cost", 0))
             mp_cost = ability.get("mpCost", 0)
+            cooldown = owner.setdefault("cooldowns", {}).get(ability["id"], 0)
+
+            if cooldown > 0:
+                battle_log(state, f"{owner['character']['name']}'s {ability_name} is recharging for {cooldown} more round(s).")
+                continue
 
             if is_stunned(owner):
                 battle_log(state, f"{owner['character']['name']} is stunned and cannot use {ability_name}.")
@@ -118,6 +128,9 @@ class MatchService:
             if callable(effect):
                 self._run_effect(effect, state, owner, target)
 
+            if ability.get("cooldown", 0) > 0:
+                owner.setdefault("cooldowns", {})[ability["id"]] = ability["cooldown"]
+
             hp_loss = max(0, previous_hp - target["hp"])
             shield_loss = max(0, previous_shield - target.get("shield", 0))
             damage_done = hp_loss + shield_loss
@@ -136,6 +149,8 @@ class MatchService:
 
         regenerate_resources(player1)
         regenerate_resources(player2)
+        self._reduce_cooldowns(player1, active_player1_cooldowns)
+        self._reduce_cooldowns(player2, active_player2_cooldowns)
         player1["queue"] = []
         player2["queue"] = []
         state["history"].append([entry for entry in state["logs"]])
@@ -166,7 +181,18 @@ class MatchService:
             "status": [],
             "shield": 0,
             "queue": [],
+            "cooldowns": {},
         }
+
+    def _reduce_cooldowns(self, player, active_at_round_start):
+        """Tick cooldowns that were already active when this round began."""
+        for ability_id, rounds_left in list(player.get("cooldowns", {}).items()):
+            if ability_id not in active_at_round_start:
+                continue
+            if rounds_left <= 1:
+                player["cooldowns"].pop(ability_id, None)
+            else:
+                player["cooldowns"][ability_id] = rounds_left - 1
 
     def _run_effect(self, effect, state, owner, target):
         ctx = AbilityContext(state)

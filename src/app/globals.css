@@ -1,3 +1,50 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  --ink: #24180f;
+  --parchment: #f3e2bc;
+  --gold: #e6ae49;
+  --wine: #822f3f;
+  --forest: #31533e;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  color: #fff5de;
+  background:
+    radial-gradient(circle at 20% 8%, rgba(220, 164, 71, 0.18), transparent 26rem),
+    radial-gradient(circle at 80% 25%, rgba(103, 35, 50, 0.3), transparent 28rem),
+    linear-gradient(145deg, #160e13 0%, #24180f 50%, #10201b 100%);
+}
+
+.game-shell {
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+  background-image: linear-gradient(rgba(255, 236, 190, 0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 236, 190, 0.025) 1px, transparent 1px);
+  background-size: 34px 34px;
+}
+
+.game-panel {
+  border: 1px solid rgba(234, 188, 104, 0.3);
+  background: linear-gradient(145deg, rgba(58, 37, 26, 0.92), rgba(24, 22, 28, 0.94));
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.35), inset 0 1px rgba(255, 239, 197, 0.07);
+}
+
+.hero-card {
+  border: 1px solid rgba(234, 188, 104, 0.27);
+  background: linear-gradient(155deg, rgba(61, 40, 31, 0.96), rgba(20, 24, 29, 0.98));
+  box-shadow: 0 18px 35px rgba(0, 0, 0, 0.26);
+}
+
+.resource-track {
+  height: 0.45rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.resource-fill { height: 100%; border-radius: inherit; transition: width 220ms ease; }
