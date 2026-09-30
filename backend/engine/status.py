@@ -1,5 +1,5 @@
 import random
-
+from backend.engine.combat import deal_damage
 
 STUN_EFFECT_TYPES = {"stun", "stunned"}
 STUN_STATUS_NAMES = {"stun", "stunned"}
@@ -106,3 +106,29 @@ def resolve_statuses(character):
         status["turnsRemaining"] -= 1
 
     character["status"] = [status for status in character["status"] if status["turnsRemaining"] > 0]
+
+
+def resolve_stagger_status(character):
+    """
+    Processes 1/3rd of accumulated staggered damage pool at turn start/end.
+    """
+    from backend.engine.combat import deal_damage
+
+    stagger_amount = character.get("staggered_damage_pool", 0)
+    if stagger_amount <= 0:
+        return
+
+    turns_left = character.get("stagger_turns_left", 3)
+    damage_tick = max(1, int(stagger_amount / max(1, turns_left)))
+
+    character["staggered_damage_pool"] -= damage_tick
+    character["stagger_turns_left"] -= 1
+
+    # Apply staggered damage directly to HP/Shield (bypassing dodge & stagger trait)
+    character["_bypassing_stagger"] = True
+    deal_damage(character, damage_tick, character.get("state"), label="Stagger Bleed", can_dodge=False)
+    character.pop("_bypassing_stagger", None)
+
+    if character["stagger_turns_left"] <= 0 or character["staggered_damage_pool"] <= 0:
+        character["staggered_damage_pool"] = 0
+        character["stagger_turns_left"] = 0
