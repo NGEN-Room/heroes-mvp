@@ -1,6 +1,6 @@
-def deflection(ctx, owner, target):
-    damage = 10 + owner["modifiedStats"["brain"]]
-    ctx.deal.damage(target, damage, "Deflection") 
+#def deflection(ctx, owner, target):
+#    damage = 10 + owner["modifiedStats"["brain"]]
+ #   ctx.deal.damage(target, damage, "Deflection") 
 
 def meteor_strike(ctx, owner, target):
     damage = 10 + owner["modifiedStats"]["brawn"]
@@ -14,13 +14,13 @@ def ice_shards(ctx, owner, target):
 
 SPELLS = [
 {
-        "id": "deflection",
-        "name": "Deflection",
-        "mpcost":10,
-        "speed":3,
-        "range":3,
-        "kind": "spell",
-        "effect": deflection,
+     #   "id": "deflection",
+      #  "name": "Deflection",
+      #  "mpcost":10,
+      #  "speed":3,
+      #  "range":3,
+      #  "kind": "spell",
+      #  "effect": deflection,
     },
      {
         "id": "meteor-strike",
